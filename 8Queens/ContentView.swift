@@ -21,7 +21,7 @@ struct ContentView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            let leftW = geometry.size.width * 0.7
+            let leftW = geometry.size.width * 0.6
             let rightW = geometry.size.width - leftW
             
             HStack(alignment: .top, spacing: 8) {
@@ -50,14 +50,16 @@ struct ContentView: View {
                 VStack {
                     Text("\(gridArray.count)")
                         .font(.largeTitle)
+                        .bold()
                     ScrollView {
-                        LazyVGrid(columns: [GridItem(), GridItem()], spacing: 10) {
+                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
                             ForEach($gridArray, id: \.id) { solvedGrid in
-                                ButtonGridView(grid: Binding(projectedValue: solvedGrid.solution), toggleState: { _, _ in })
+                                ButtonGridView(grid: solvedGrid.solution, toggleState: { _, _ in })
                                     .aspectRatio(1, contentMode: .fit)
 //                                    .padding(.trailing)
                             }
                         }
+                        .padding(.horizontal, 8)
                     }
                 }
                 .frame(width: rightW, height: geometry.size.height)
@@ -66,6 +68,7 @@ struct ContentView: View {
             .padding(.horizontal)
         }
         .ignoresSafeArea()
+        .padding(.horizontal)
     }
     
     // MARK: - Left grid (main) Read/Write State

@@ -13,8 +13,11 @@ struct ButtonGridView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            let minSide = min(geometry.size.width, geometry.size.height) * 0.9
-//            ZStack {
+            let minSide = min(geometry.size.width, geometry.size.height)
+            let minGridSide = minSide * 0.9
+            ZStack {
+                Color(.yellow)
+                
                 VStack(spacing: 4) {
 //                    Text("W: \(geometry.size.width) - H: \(geometry.size.height)")
                     ForEach(0..<8, id: \.self) { row in
@@ -27,10 +30,12 @@ struct ButtonGridView: View {
                         }
                     }
                 }
-//            }
+                .frame(width: minGridSide, height: minGridSide)
+            }
             .frame(width: minSide, height: minSide)
             .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
-            .background(.yellow)
+            .aspectRatio(1, contentMode: .fit)
+
         }
     }
 }

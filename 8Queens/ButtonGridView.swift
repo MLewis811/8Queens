@@ -16,7 +16,7 @@ struct ButtonGridView: View {
             let minSide = min(geometry.size.width, geometry.size.height) * 0.9
 //            ZStack {
                 VStack(spacing: 4) {
-                    Text("W: \(geometry.size.width) - H: \(geometry.size.height)")
+//                    Text("W: \(geometry.size.width) - H: \(geometry.size.height)")
                     ForEach(0..<8, id: \.self) { row in
                         HStack(spacing: 4) {
                             ForEach(0..<8, id: \.self) { col in
@@ -28,7 +28,7 @@ struct ButtonGridView: View {
                     }
                 }
 //            }
-//            .frame(width: minSide, height: minSide)
+            .frame(width: minSide, height: minSide)
             .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
             .background(.yellow)
         }

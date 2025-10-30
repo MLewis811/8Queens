@@ -55,13 +55,15 @@ struct ContentView: View {
                             if isAutomating {
                                 cancelAutomation = true
                             } else {
-                                let solution = [(0,0), (1,4), (2,7)]
-                                automateButtonPresses(coordinates: solution)
+                                automateFindingSolutions()
+//                                let solution = [(0,0), (1,4), (2,7)]
+//                                automateButtonPresses(coordinates: solution)
                             }
                         }
                         
                         Spacer()
                     }
+                    .padding(.bottom)
                     Spacer()
                 }
                 .frame(width: leftW, height: geometry.size.height)
@@ -179,6 +181,42 @@ struct ContentView: View {
             
             isAutomating = false
             cancelAutomation = false
+        }
+    }
+    
+    func automateFindingSolutions() {
+        isAutomating = true
+        cancelAutomation = false
+        
+        Task {
+            await MainActor.run {
+                placeInRow(row: 0)
+            }
+        }
+        
+        isAutomating = false
+        cancelAutomation = false
+    }
+    
+    func placeInRow(row: Int) {
+        print("In row \(row)")
+        Task {
+            if cancelAutomation { return }
+            
+            try? await Task.sleep(nanoseconds: 1_000_000_000)
+            if cancelAutomation { return }
+            if row == grid.count {
+                saveGrid()
+                return
+            }
+            
+            for col in grid[row].indices {
+                if grid[row][col] == .off {
+                    toggleState(row: row, col: col)
+                    placeInRow(row: row + 1)
+                    toggleState(row: row, col: col)
+                }
+            }
         }
     }
 }

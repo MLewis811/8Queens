@@ -13,6 +13,8 @@ struct IdentifiableSolution: Identifiable {
 }
 
 struct ContentView: View {
+    @State private var isAutomating = false
+    
     @State private var grid: [[ButtonState]] = Array(
         repeating: Array(repeating: .off, count: 8), count: 8
     )
@@ -37,10 +39,23 @@ struct ContentView: View {
                             )
                             grid = newGrid
                         }
+                        .disabled(isAutomating)
+                        
                         Spacer()
+                        
                         Button("SAVE") {
                             saveGrid()
                         }
+                        .disabled(isAutomating)
+                        
+                        Spacer()
+                        
+                        Button("AUTOMATE") {
+                            let solution = [(0,0), (1,4), (2,7)]
+                            automateButtonPresses(coordinates: solution)
+                        }
+                        .disabled(isAutomating)
+                        
                         Spacer()
                     }
                     Spacer()
@@ -140,6 +155,21 @@ struct ContentView: View {
         var newGridArray = gridArray
         newGridArray.append(newSol)
         gridArray = newGridArray
+    }
+    
+    func automateButtonPresses(coordinates: [(Int, Int)]) {
+        isAutomating = true
+        
+        Task {
+            for (row, col) in coordinates {
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                await MainActor.run {
+                    toggleState(row: row, col: col)
+                }
+            }
+            
+            isAutomating = false
+        }
     }
 }
 

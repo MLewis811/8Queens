@@ -189,36 +189,38 @@ struct ContentView: View {
         cancelAutomation = false
         
         Task {
-            await MainActor.run {
-                placeInRow(row: 0)
-            }
+            await placeInRow(row: 0)
+            isAutomating = false
+            cancelAutomation = false
         }
-        
-        isAutomating = false
-        cancelAutomation = false
     }
     
-    func placeInRow(row: Int) {
-        print("In row \(row)")
-        Task {
-            if cancelAutomation { return }
-            
+    func placeInRow(row: Int) async {
+        if cancelAutomation { return }
+        
+
+        if cancelAutomation { return }
+        if row == grid.count {
             try? await Task.sleep(nanoseconds: 1_000_000_000)
-            if cancelAutomation { return }
-            if row == grid.count {
-                saveGrid()
-                return
-            }
-            
-            for col in grid[row].indices {
-                if grid[row][col] == .off {
+            saveGrid()
+            return
+        }
+        
+        for col in grid[row].indices {
+            if grid[row][col] == .off {
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                await MainActor.run {
                     toggleState(row: row, col: col)
-                    placeInRow(row: row + 1)
+                }
+                await placeInRow(row: row + 1)
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                await MainActor.run {
                     toggleState(row: row, col: col)
                 }
             }
         }
     }
+    
 }
 
 #Preview {
